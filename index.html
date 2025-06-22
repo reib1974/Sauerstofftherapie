@@ -36,8 +36,14 @@
       font-size: 16px;
     }
     .result {
-      margin-top: 20px;
+      margin-top: 10px;
       font-weight: bold;
+    }
+    .correct {
+      color: green;
+    }
+    .incorrect {
+      color: red;
     }
   </style>
 </head>
@@ -46,36 +52,37 @@
   <h1>Sauerstofftherapie</h1>
 
   <form id="quizForm">
-    <div class="question">
+    <div class="question" id="q1-container">
       <h3>Frage 1:<br>Welcher Zielbereich der peripheren Sauerstoffsättigung (SpO₂) ist für Patienten mit bekannter COPD präklinisch anzustreben?</h3>
       <label><input type="radio" name="q1" value="A"> A. 95–100 %</label>
       <label><input type="radio" name="q1" value="B"> B. 85–90 %</label>
       <label><input type="radio" name="q1" value="C"> C. 88–92 %</label>
       <label><input type="radio" name="q1" value="D"> D. 75–80 %</label>
       <label><input type="radio" name="q1" value="E"> E. 90–95 %</label>
+      <div class="result" id="result-q1"></div>
     </div>
 
-    <div class="question">
+    <div class="question" id="q2-container">
       <h3>Frage 2:<br>Welche Sauerstoffapplikation führt am zuverlässigsten zu einer FiO₂ von nahezu 100 %?</h3>
       <label><input type="radio" name="q2" value="A"> A. Nasenbrille mit 6 l/min</label>
       <label><input type="radio" name="q2" value="B"> B. Gesichtsmaske ohne Reservoir</label>
       <label><input type="radio" name="q2" value="C"> C. Gesichtsmaske mit Reservoirbeutel bei 15 l/min</label>
       <label><input type="radio" name="q2" value="D"> D. Nasensonde bei 4 l/min</label>
+      <div class="result" id="result-q2"></div>
     </div>
 
-    <div class="question">
+    <div class="question" id="q3-container">
       <h3>Frage 3:<br>Welche Aussage zur Hyperoxie ist korrekt?</h3>
       <label><input type="radio" name="q3" value="A"> A. Hyperoxie verbessert immer die CO₂-Elimination.</label>
       <label><input type="radio" name="q3" value="B"> B. Hyperoxie ist bei COPD-Patienten unbedenklich.</label>
       <label><input type="radio" name="q3" value="C"> C. Hyperoxie kann das Risiko für Reinfarkte erhöhen.</label>
       <label><input type="radio" name="q3" value="D"> D. Hyperoxie tritt nur bei unzureichender Maskenbelüftung auf.</label>
       <label><input type="radio" name="q3" value="E"> E. Hyperoxie ist nur im innerklinischen Bereich relevant.</label>
+      <div class="result" id="result-q3"></div>
     </div>
 
     <button type="button" onclick="checkAnswers()">Antworten prüfen</button>
   </form>
-
-  <div class="result" id="result"></div>
 
   <script>
     function checkAnswers() {
@@ -85,18 +92,26 @@
         q3: 'C'
       };
 
-      let score = 0;
-      const total = Object.keys(answers).length;
-
       for (let key in answers) {
         const selected = document.querySelector(`input[name="${key}"]:checked`);
-        if (selected && selected.value === answers[key]) {
-          score++;
+        const resultDiv = document.getElementById(`result-${key}`);
+        resultDiv.textContent = '';
+        resultDiv.className = 'result';
+
+        if (selected) {
+          if (selected.value === answers[key]) {
+            resultDiv.textContent = 'Richtig!';
+            resultDiv.classList.add('correct');
+          } else {
+            const correctLabel = document.querySelector(`input[name="${key}"][value="${answers[key]}"]`).parentElement.textContent.trim();
+            resultDiv.textContent = `Falsch! Richtige Antwort: ${correctLabel}`;
+            resultDiv.classList.add('incorrect');
+          }
+        } else {
+          resultDiv.textContent = 'Bitte eine Antwort auswählen.';
+          resultDiv.classList.add('incorrect');
         }
       }
-
-      const result = document.getElementById('result');
-      result.textContent = `Du hast ${score} von ${total} Fragen richtig beantwortet.`;
     }
   </script>
 
